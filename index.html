@@ -1,0 +1,285 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01//EN" "http://www.w3.org/TR/html4/strict.dtd">
+<html>
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+  <meta http-equiv="Content-Style-Type" content="text/css">
+  <title></title>
+  <meta name="Generator" content="Cocoa HTML Writer">
+  <meta name="CocoaVersion" content="2566">
+  <style type="text/css">
+    p.p1 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica}
+    p.p2 {margin: 0.0px 0.0px 0.0px 0.0px; font: 12.0px Helvetica; min-height: 14.0px}
+  </style>
+</head>
+<body>
+<p class="p1">&lt;!DOCTYPE html&gt;</p>
+<p class="p1">&lt;html lang="zh-CN"&gt;</p>
+<p class="p1">&lt;head&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta charset="UTF-8"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;title&gt;加工费计算器&lt;/title&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;meta name="viewport" content="width=device-width, initial-scale=1"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- 引入 Firebase SDK --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-app.js"&gt;&lt;/script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script src="https://www.gstatic.com/firebasejs/9.17.1/firebase-firestore.js"&gt;&lt;/script&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;style&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>/* CSS 样式 */</p>
+<p class="p1"><span class="Apple-converted-space">        </span>body {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>font-family: Arial, sans-serif;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin: 20px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background-color: #f9f9f9;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>h1, h2, h3 {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>color: #333;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>label {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>display: inline-block;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>width: 150px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-top: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>input, textarea, select {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-top: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 5px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>width: 200px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>button {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-top: 20px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 10px 20px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>#project-list {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-top: 20px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border-collapse: collapse;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>#project-list th, #project-list td {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>padding: 10px;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>text-align: center;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>border: 1px solid #ccc;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>#project-list tr:nth-child(even) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>background-color: #f2f2f2;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>#wool-calculator, #project-section, #project-list-section {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>margin-bottom: 40px;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>@media screen and (max-width: 600px) {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>label, input, textarea, select {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>width: 100%;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/style&gt;</p>
+<p class="p1">&lt;/head&gt;</p>
+<p class="p1">&lt;body&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;h1&gt;加工费计算器&lt;/h1&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- 进口羊毛计算工具 --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;section id="wool-calculator"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;h2&gt;进口羊毛计算工具&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;label for="usd-price"&gt;美金价格 (每公斤)：&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;input type="number" id="usd-price" step="0.01"&gt;&lt;br&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;label for="exchange-rate"&gt;美元汇率：&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;input type="number" id="exchange-rate" step="0.0001"&gt;&lt;br&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;button onclick="calculateWoolPrice()"&gt;计算人民币价格&lt;/button&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;p id="wool-price-result"&gt;&lt;/p&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- 加工项目填写 --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;section id="project-section"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;h2&gt;添加加工项目&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;label for="project-name"&gt;加工项目名称：&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;input type="text" id="project-name"&gt;&lt;br&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;label for="user-name"&gt;填写人：&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;input type="text" id="user-name"&gt;&lt;br&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;label for="date"&gt;日期：&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;input type="date" id="date"&gt;&lt;br&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;h3&gt;加工费收取方式&lt;/h3&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;input type="radio" id="before-weight" name="charge-method" value="before" checked&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;label for="before-weight"&gt;按照加工前重量收费&lt;/label&gt;&lt;br&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;input type="radio" id="after-weight" name="charge-method" value="after"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;label for="after-weight"&gt;按照加工后重量收费&lt;/label&gt;&lt;br&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;label for="weight"&gt;重量 (公斤)：&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;input type="number" id="weight" step="0.01"&gt;&lt;br&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;label for="unit-price"&gt;单价 (每公斤)：&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;input type="number" id="unit-price" step="0.01"&gt;&lt;br&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;label for="loss-percentage"&gt;损耗百分比 (%)：&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;input type="number" id="loss-percentage" step="0.01"&gt;&lt;br&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;label for="packing-fee"&gt;打包费用：&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;input type="number" id="packing-fee" step="0.01"&gt;&lt;br&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;label for="transport-fee"&gt;运输费用：&lt;/label&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;input type="number" id="transport-fee" step="0.01"&gt;&lt;br&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;label for="remarks"&gt;备注：&lt;/label&gt;&lt;br&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;textarea id="remarks" rows="4" cols="50"&gt;&lt;/textarea&gt;&lt;br&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;button onclick="addProject()"&gt;添加项目&lt;/button&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- 项目列表 --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;section id="project-list-section"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;h2&gt;加工项目列表&lt;/h2&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;table id="project-list"&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th&gt;日期&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th&gt;填写人&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th&gt;项目名称&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th&gt;加工费&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th&gt;打包费用&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th&gt;运输费用&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th&gt;总费用&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>&lt;th&gt;备注&lt;/th&gt;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>&lt;/tr&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>&lt;/table&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/section&gt;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;!-- JavaScript 脚本 --&gt;</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;script&gt;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>// Firebase 配置 (稍后我们将填写这里)</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const firebaseConfig = {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>// 您的 Firebase 配置</p>
+<p class="p1"><span class="Apple-converted-space">        </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// 初始化 Firebase</p>
+<p class="p1"><span class="Apple-converted-space">        </span>firebase.initializeApp(firebaseConfig);</p>
+<p class="p1"><span class="Apple-converted-space">        </span>const db = firebase.firestore();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// 存储项目列表</p>
+<p class="p1"><span class="Apple-converted-space">        </span>let projects = [];</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// 页面加载时获取数据</p>
+<p class="p1"><span class="Apple-converted-space">        </span>window.onload = function() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>loadProjects();</p>
+<p class="p1"><span class="Apple-converted-space">        </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// 从 Firestore 获取数据</p>
+<p class="p1"><span class="Apple-converted-space">        </span>async function loadProjects() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const querySnapshot = await db.collection('projects').orderBy('timestamp', 'desc').get();</p>
+<p class="p1"><span class="Apple-converted-space">                </span>projects = [];</p>
+<p class="p1"><span class="Apple-converted-space">                </span>querySnapshot.forEach((doc) =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                    </span>projects.push(doc.data());</p>
+<p class="p1"><span class="Apple-converted-space">                </span>});</p>
+<p class="p1"><span class="Apple-converted-space">                </span>updateProjectList();</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} catch (error) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>console.error('加载项目时出错：', error);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// 进口羊毛计算工具</p>
+<p class="p1"><span class="Apple-converted-space">        </span>function calculateWoolPrice() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const X = parseFloat(document.getElementById('usd-price').value);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const exchangeRate = parseFloat(document.getElementById('exchange-rate').value);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (isNaN(X) || isNaN(exchangeRate)) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>alert('请输入有效的美金价格和汇率！');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const price = X * exchangeRate * 1.09 * 1.01 * 1.008;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>document.getElementById('wool-price-result').innerText = `每公斤人民币价格：${price.toFixed(2)} 元`;</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// 添加加工项目</p>
+<p class="p1"><span class="Apple-converted-space">        </span>async function addProject() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const projectName = document.getElementById('project-name').value;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const userName = document.getElementById('user-name').value || '未填写';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const date = document.getElementById('date').value || new Date().toISOString().split('T')[0];</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const chargeMethod = document.querySelector('input[name="charge-method"]:checked').value;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const weight = parseFloat(document.getElementById('weight').value);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const unitPrice = parseFloat(document.getElementById('unit-price').value);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const lossPercentage = parseFloat(document.getElementById('loss-percentage').value) || 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const packingFee = parseFloat(document.getElementById('packing-fee').value) || 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const transportFee = parseFloat(document.getElementById('transport-fee').value) || 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const remarks = document.getElementById('remarks').value || '无';</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (!projectName || isNaN(weight) || isNaN(unitPrice)) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>alert('请完整填写项目名称、重量和单价！');</p>
+<p class="p1"><span class="Apple-converted-space">                </span>return;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// 计算加工费</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let processingFee = 0;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>let finalWeight = weight;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>if (chargeMethod === 'before') {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>processingFee = weight * unitPrice;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} else {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>finalWeight = weight * (1 - lossPercentage / 100);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>processingFee = finalWeight * unitPrice;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>const totalFee = processingFee + packingFee + transportFee;</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// 创建项目对象</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const project = {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>date,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>userName,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>projectName,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>processingFee: processingFee.toFixed(2),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>packingFee: packingFee.toFixed(2),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>transportFee: transportFee.toFixed(2),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>totalFee: totalFee.toFixed(2),</p>
+<p class="p1"><span class="Apple-converted-space">                </span>remarks,</p>
+<p class="p1"><span class="Apple-converted-space">                </span>timestamp: firebase.firestore.FieldValue.serverTimestamp()</p>
+<p class="p1"><span class="Apple-converted-space">            </span>};</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>try {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>// 将项目添加到 Firestore</p>
+<p class="p1"><span class="Apple-converted-space">                </span>await db.collection('projects').add(project);</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>// 更新项目列表</p>
+<p class="p1"><span class="Apple-converted-space">                </span>projects.unshift(project);</p>
+<p class="p1"><span class="Apple-converted-space">                </span>updateProjectList();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>// 清空输入框</p>
+<p class="p1"><span class="Apple-converted-space">                </span>document.getElementById('project-name').value = '';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>document.getElementById('weight').value = '';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>document.getElementById('unit-price').value = '';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>document.getElementById('loss-percentage').value = '';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>document.getElementById('packing-fee').value = '';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>document.getElementById('transport-fee').value = '';</p>
+<p class="p1"><span class="Apple-converted-space">                </span>document.getElementById('remarks').value = '';</p>
+<p class="p1"><span class="Apple-converted-space">            </span>} catch (error) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>console.error('添加项目时出错：', error);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">        </span>// 更新项目列表显示</p>
+<p class="p1"><span class="Apple-converted-space">        </span>function updateProjectList() {</p>
+<p class="p1"><span class="Apple-converted-space">            </span>const table = document.getElementById('project-list');</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// 清空除表头外的行</p>
+<p class="p1"><span class="Apple-converted-space">            </span>while (table.rows.length &gt; 1) {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>table.deleteRow(1);</p>
+<p class="p1"><span class="Apple-converted-space">            </span>}</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">            </span>// 添加项目数据</p>
+<p class="p1"><span class="Apple-converted-space">            </span>projects.forEach(project =&gt; {</p>
+<p class="p1"><span class="Apple-converted-space">                </span>const row = table.insertRow();</p>
+<p class="p2"><br></p>
+<p class="p1"><span class="Apple-converted-space">                </span>row.insertCell(0).innerText = project.date;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>row.insertCell(1).innerText = project.userName;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>row.insertCell(2).innerText = project.projectName;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>row.insertCell(3).innerText = project.processingFee;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>row.insertCell(4).innerText = project.packingFee;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>row.insertCell(5).innerText = project.transportFee;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>row.insertCell(6).innerText = project.totalFee;</p>
+<p class="p1"><span class="Apple-converted-space">                </span>row.insertCell(7).innerText = project.remarks;</p>
+<p class="p1"><span class="Apple-converted-space">            </span>});</p>
+<p class="p1"><span class="Apple-converted-space">        </span>}</p>
+<p class="p1"><span class="Apple-converted-space">    </span>&lt;/script&gt;</p>
+<p class="p1">&lt;/body&gt;</p>
+<p class="p1">&lt;/html&gt;</p>
+</body>
+</html>
